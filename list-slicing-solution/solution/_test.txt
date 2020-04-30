@@ -1,0 +1,23 @@
+Test that our solutions to list-slicing behave as intended.
+
+First, let's import the doctest module, so we can actually run our tests.
+
+    >>> import doctest
+
+Now, import the files we'll want to test:
+
+    >>> import list_operations
+    >>> import further_study
+
+Assuming they've imported with no syntax errors, now we should be able
+to run the doctests.
+
+First, check the basic solution:
+
+    >>> doctest.testmod(list_operations).failed
+    0
+
+Now, check the Further Study.
+
+    >>> doctest.testmod(further_study).failed
+    0

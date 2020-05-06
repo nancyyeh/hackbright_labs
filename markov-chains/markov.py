@@ -11,7 +11,7 @@ def open_and_read_file(file_path):
 
     # your code goes here
     text = open(file_path).read()
-    # text = text.replace("\n", " ") # replace /n with spaces
+    # text = text.replace("\n", " ") # replace \n with spaces
     # text = text.rstrip() #remove the last space
 
     return text

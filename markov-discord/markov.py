@@ -1,66 +1,128 @@
+import os
+import discord
+
+client = discord.Client()
+
+@client.event
+async def on_ready():
+    print(f'Successfully connected! Logged in as {client.user}.')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith('give me some text'):
+        await message.channel.send(random_text)
+
+
+
 """A Markov chain generator that can tweet random messages."""
 
-import sys
 from random import choice
+import sys
 
+def open_and_read_file(file_path):
+    """Take file path as string; return text as string.
 
-def open_and_read_file(filenames):
-    """Take list of files. Open them, read them, and return one long string."""
+    Takes a string that is a file path, opens the file, and turns
+    the file's contents as one string of text.
+    """
 
-    body = ''
-    for filename in filenames:
-        text_file = open(filename)
-        body = body + text_file.read()
-        text_file.close()
+    # your code goes here
+    text = open(file_path).read()
+    # text = text.replace("\n", " ") # replace \n with spaces
+    text = text.rstrip() #remove the last space
 
-    return body
+    return text
 
 
 def make_chains(text_string):
-    """Take input text as string; return dictionary of Markov chains."""
+    """Take input text as string; return dictionary of Markov chains.
+
+    A chain will be a key that consists of a tuple of (word1, word2)
+    and the value would be a list of the word(s) that follow those two
+    words in the input text.
+
+    For example:
+
+        >>> chains = make_chains("hi there mary hi there juanita")
+
+    Each bigram (except the last) will be a key in chains:
+
+        >>> sorted(chains.keys())
+        [('hi', 'there'), ('mary', 'hi'), ('there', 'mary')]
+
+    Each item in chains is a list of all possible following words:
+
+        >>> chains[('hi', 'there')]
+        ['mary', 'juanita']
+        
+        >>> chains[('there','juanita')]
+        [None]
+    """
 
     chains = {}
+    text_string = text_string.split()
 
-    words = text_string.split()
-    for i in range(len(words) - 2):
-        key = (words[i], words[i + 1])
-        value = words[i + 2]
+    # your code goes here
+    for index in range(len(text_string)-1):
+        tup = (text_string[index], text_string[index+1])
+        if index < len(text_string)-2:
+            chains[tup] = chains.get(tup, [])
+            word_following = text_string[index+2]
+            chains[tup].append(word_following)
 
-        if key not in chains:
-            chains[key] = []
-
-        chains[key].append(value)
-
+    # print(chains)
     return chains
 
 
 def make_text(chains):
-    """Take dictionary of Markov chains; return random text."""
+    """Return text from chains."""
+    words = []
 
-    keys = list(chains.keys())
-    key = choice(keys)
+    # your code goes here
 
-    words = [key[0], key[1]]
-    while key in chains:
-        # Keep looping until we have a key that isn't in the chains
-        # (which would mean it was the end of our original text).
+    list_keys = list(chains.keys())
+    
 
-        # Note that for long texts (like a full book), this might mean
-        # it would run for a very long time.
+    while True:
+        starting_key = choice(list_keys)
+        # print(starting_key[0])
+        # append the two starting key
+        if starting_key[0][0].isupper():
+            words.append(starting_key[0])
+            words.append(starting_key[1])
+            break
+        else:
+            continue
 
-        word = choice(chains[key])
-        words.append(word)
-        key = (key[1], word)
+    while True:
+        current_key = tuple(words[-2:])
+        # print (current_key)
+        if chains.get(current_key) is None:
+            break
+        else:
+            next_word = choice(chains[current_key])
+            words.append(next_word)
+    
+    return " ".join(words)
 
-    return ' '.join(words)
 
+input_path = sys.argv[1]
+# input_text = "hi there mary hi there juanita"
 
-# Get the filenames from the user through a command line prompt, ex:
-# python markov.py green-eggs.txt shakespeare.txt
-filenames = sys.argv[1:]
+# Open the file and turn it into one long string
+input_text = open_and_read_file(input_path)
 
-# Open the files and turn them into one long string
-text = open_and_read_file(filenames)
+# print(input_text)
 
 # Get a Markov chain
-chains = make_chains(text)
+chains = make_chains(input_text)
+# print(chains)
+
+# Produce random text
+random_text = make_text(chains)
+
+
+client.run(os.environ['DISCORD_TOKEN'])

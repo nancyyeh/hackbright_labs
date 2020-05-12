@@ -76,10 +76,10 @@ Class Methods
 
 Return a cupcake by its name:
 
-  >>> Cupcake.get('Strawberry Fields')
+  >>> Cupcake.get_cupcakes('Strawberry Fields')
   <Cupcake name="Strawberry Fields" qty=0>
 
 Or print if it doesn't exist:
 
-  >>> Cupcake.get('Devil\'s Food Cake')
+  >>> Cupcake.get_cupcakes('Devil\'s Food Cake')
   Sorry, that cupcake doesn't exist

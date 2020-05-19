@@ -96,8 +96,9 @@ function censorVowels(word) {
   for (const letter of word) {
     if ('aeiou'.includes(letter)) {
       chars.push('*');
+    } else {
+     chars.push(letter);     
     }
-    chars.push(letter);
   }
 
   return chars.join('');
